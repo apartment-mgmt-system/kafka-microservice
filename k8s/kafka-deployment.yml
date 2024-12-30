@@ -25,7 +25,7 @@ spec:
         - name: KAFKA_PROCESS_ROLES
           value: "broker,controller"
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-          value: "1@event-streaming-kraft:29093"  # Ensure the service name matches here
+          value: "1@event-streaming-kraft:29093"  # Match the service name here
         - name: KAFKA_STORAGE_DIR
           value: "/var/lib/event-streaming/data"
         - name: KAFKA_LISTENERS
@@ -52,7 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: event-streaming-kraft
+  name: event-streaming-kraft  # Updated to match the hostname in KAFKA_CONTROLLER_QUORUM_VOTERS
 spec:
   ports:
   - name: external-9092
@@ -62,6 +62,10 @@ spec:
   - name: internal-29092
     port: 29092
     targetPort: 29092
+    protocol: TCP
+  - name: internal-controller-29093  # Added port for controller communication
+    port: 29093
+    targetPort: 29093
     protocol: TCP
   selector:
     app: event-streaming
