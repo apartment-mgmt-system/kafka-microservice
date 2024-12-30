@@ -1,0 +1,48 @@
+name: Deploy Kafka to AKS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up kubectl to interact with the Kubernetes cluster
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "latest"
+
+      # Step 3: Configure kubectl using kubeconfig
+      - name: Configure Kubectl using kubconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      # Step 3: Create Kafka UUID (for CLUSTER_ID) & store to environment file
+      - name: Create Kafka UUID (for CLUSTER_ID)
+        id: create-kafka-uuid
+        run: |
+          KAFKA_CLUSTER_ID=$(az aks show --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }} --query id -o tsv | sha256sum | awk '{ print $1 }')
+          echo "KAFKA_CLUSTER_ID=${KAFKA_CLUSTER_ID}" >> $GITHUB_ENV
+
+      # Step 4: Create Kafka secrets for cluster-id-secret using env file
+      - name: Create Kafka secrets
+        run: |
+          kubectl create secret generic kafka-cluster-id-secret --from-literal=cluster-id=${{ env.KAFKA_CLUSTER_ID }} --dry-run=client -o yaml | kubectl apply -f -
+
+      # Step 5: Apply Kafka Deployment and Service
+      - name: Deploy Kafka to AKS
+        run: |
+          kubectl apply -f ./kafka-deployment.yaml
+
+      # Optional: Verify Deployment
+      - name: Verify Kafka Deployment
+        run: |
+          kubectl get pods -l app=kafka
