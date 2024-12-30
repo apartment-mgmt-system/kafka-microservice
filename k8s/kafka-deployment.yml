@@ -27,7 +27,7 @@ spec:
         - name: KAFKA_PROCESS_ROLES
           value: "broker"
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-          value: "1@event-streaming-kraft:29093"
+          value: ""
         - name: KAFKA_STORAGE_DIR
           value: "/var/lib/event-streaming/data"
         - name: KAFKA_LOG_DIRS
