@@ -40,7 +40,7 @@ jobs:
       # Step 5: Apply Kafka Deployment and Service
       - name: Deploy Kafka to AKS
         run: |
-          kubectl apply -f k8s/kafka-deployment.yaml
+          kubectl apply -f k8s/kafka-deployment.yml
 
       # Optional: Verify Deployment
       - name: Verify Kafka Deployment
