@@ -39,7 +39,7 @@ spec:
         - name: CLUSTER_ID
           valueFrom:
             secretKeyRef:
-              name: event-streaming-cluster-id-secret
+              name: kafka-cluster-id-secret
               key: cluster-id
         volumeMounts:
         - name: event-streaming-data
