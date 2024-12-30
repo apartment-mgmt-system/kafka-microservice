@@ -37,8 +37,6 @@ spec:
           value: "/var/lib/kafka/data"
         - name: KAFKA_LOG_DIRS
           value: "/var/lib/kafka/data"
-        - name: KAFKA_LISTENERS
-          value: "PLAINTEXT://0.0.0.0:9092"
         - name: KAFKA_KRAFT_MODE
           value: "true"
         - name: CLUSTER_ID
