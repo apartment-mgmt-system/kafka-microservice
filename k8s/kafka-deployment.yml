@@ -54,6 +54,7 @@ kind: Service
 metadata:
   name: event-streaming-kraft  # Updated to match the hostname in KAFKA_CONTROLLER_QUORUM_VOTERS
 spec:
+  type: LoadBalancer
   ports:
   - name: external-9092
     port: 9092
