@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kaafka-deployment
+  name: event-streaming-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kafka-spec
+      app: event-streaming
   template:
     metadata:
       labels:
-        app: kafka-label
+        app: event-streaming
     spec:
       containers:
-      - name: kafka-container
+      - name: event-streaming-container
         image: confluentinc/cp-kafka:7.8.0
         env:
         - name: KAFKA_NODE_ID
@@ -21,17 +21,17 @@ spec:
         - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
           value: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
         - name: KAFKA_ADVERTISED_LISTENERS
-          value: "PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092"
+          value: "PLAINTEXT://event-streaming-kraft:29092,PLAINTEXT_HOST://localhost:9092"
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
           value: "PLAINTEXT"
         - name: KAFKA_PROCESS_ROLES
           value: "broker"
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
-          value: "1@kafka-kraft:29093"
+          value: "1@event-streaming-kraft:29093"
         - name: KAFKA_STORAGE_DIR
-          value: "/var/lib/kafka/data"
+          value: "/var/lib/event-streaming/data"
         - name: KAFKA_LOG_DIRS
-          value: "/var/lib/kafka/data"
+          value: "/var/lib/event-streaming/data"
         - name: KAFKA_CONTROLLER_LISTENER_NAMES
           value: "CONTROLLER"
         - name: KAFKA_KRAFT_MODE
@@ -39,19 +39,19 @@ spec:
         - name: CLUSTER_ID
           valueFrom:
             secretKeyRef:
-              name: kafka-cluster-id-secret
+              name: event-streaming-cluster-id-secret
               key: cluster-id
         volumeMounts:
-        - name: kafka-data
-          mountPath: /var/lib/kafka/data
+        - name: event-streaming-data
+          mountPath: /var/lib/event-streaming/data
       volumes:
-      - name: kafka-data
+      - name: event-streaming-data
         emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kaafka-service
+  name: event-streaming-service
 spec:
   ports:
   - name: external-9092
@@ -63,4 +63,4 @@ spec:
     targetPort: 29092
     protocol: TCP
   selector:
-    app: kafka-spec
+    app: event-streaming
