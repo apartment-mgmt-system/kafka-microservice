@@ -50,7 +50,6 @@ spec:
       volumes:
       - name: kafka-data
         emptyDir: {}
-
 ---
 apiVersion: v1
 kind: Service
@@ -58,11 +57,11 @@ metadata:
   name: kafka
 spec:
   ports:
-  - name: external-9092        # Name reflecting external communication port
+  - name: external-9092
     port: 9092
     targetPort: 9092
     protocol: TCP
-  - name: internal-29092       # Name reflecting internal communication port
+  - name: internal-29092
     port: 29092
     targetPort: 29092
     protocol: TCP
